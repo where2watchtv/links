@@ -1,0 +1,67 @@
+name: player
+
+# Add or remove a player by hand from the Actions tab. The change is checked,
+# links.json is rebuilt in the same job (a push made with the workflow's own
+# token starts no other workflow), and github-actions[bot] commits and pushes.
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        type: choice
+        options: [add, remove]
+        default: add
+      service:
+        description: Service name. Remove takes out every player with this name.
+        required: true
+      movie:
+        description: Film address with {tmdb} or {imdb}, such as https://p.example/movie/{tmdb}
+        required: false
+      tv:
+        description: TV address with {tmdb} or {imdb}; {season} and {episode} for episode players
+        required: false
+      country:
+        description: Two-letter country code, not US
+        default: GB
+      kind:
+        type: choice
+        options: [free, ads, flatrate, rent, buy]
+        default: free
+
+permissions:
+  contents: write
+
+concurrency:
+  group: index
+  cancel-in-progress: false
+
+jobs:
+  player:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Edit players.json
+        env:
+          INPUT_ACTION: ${{ inputs.action }}
+          INPUT_SERVICE: ${{ inputs.service }}
+          INPUT_MOVIE: ${{ inputs.movie }}
+          INPUT_TV: ${{ inputs.tv }}
+          INPUT_COUNTRY: ${{ inputs.country }}
+          INPUT_KIND: ${{ inputs.kind }}
+        run: node src/player.mjs
+      - run: npm test
+      - run: npm run check
+      - run: npm run index
+      - name: Commit and push
+        env:
+          ACTION: ${{ inputs.action }}
+          SERVICE: ${{ inputs.service }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add players.json links.json
+          if [ "$ACTION" = remove ]; then printf 'Remove %s player\n' "$SERVICE"; else printf 'Add %s player\n' "$SERVICE"; fi > msg.txt
+          git commit -F msg.txt
+          git push

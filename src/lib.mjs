@@ -163,3 +163,27 @@ export function buildIndex(docs, players = [], generated = new Date().toISOStrin
   }
   return { generated, titles: Object.fromEntries(Object.entries(titles).sort(([a], [b]) => a.localeCompare(b))), players };
 }
+
+/**
+ * The player workflow's change to players.json: add a service's film and TV
+ * addresses (each checked like a submitted player), or remove every player
+ * with that service name.
+ */
+export function editPlayers(players, services, { action = 'add', service, movie, tv, country, kind }) {
+  const name = String(service || '').trim();
+  if (!name) return { ok: false, error: 'A service name is needed.' };
+  if (action === 'remove') {
+    const left = players.filter((p) => p.service !== name);
+    return left.length === players.length ? { ok: false, error: `No player is named ${name}.` } : { ok: true, players: left };
+  }
+  if (action !== 'add') return { ok: false, error: 'The action must be add or remove.' };
+  const pairs = [['movie', movie], ['tv', tv]].filter(([, u]) => String(u || '').trim());
+  if (!pairs.length) return { ok: false, error: 'Give a film address, a TV address, or both.' };
+  const out = players.slice();
+  for (const [type, url] of pairs) {
+    const r = checkPlayer({ service: name, url: String(url).trim(), type, country, kind }, services, out);
+    if (!r.ok) return { ok: false, error: `${type}: ${r.error}` };
+    out.push(r.player);
+  }
+  return { ok: true, players: out };
+}

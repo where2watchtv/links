@@ -11,4 +11,6 @@ To add one, open an issue with the [Add a link](../../issues/new?template=add-li
 | `services.json` | Licensed services a link may point to |
 | `links.json` | Every title's links in one file, rebuilt on each merge. where2watch.ch reads this. |
 
+To add or remove a player by hand, run the **player** workflow from the Actions tab. It checks the change, rebuilds links.json and commits as github-actions[bot].
+
 Checks: `npm test` and `npm run check`.

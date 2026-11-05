@@ -85,3 +85,15 @@ test('the player form becomes a player to check', () => {
   const body = '### Player address\n\nhttps://player.example/{imdb}\n\n### Type\n\nFilm\n\n### Country\n\nDE\n\n### Kind\n\nFree with ads';
   assert.deepEqual(playerRequest(parseIssueForm(body)), { url: 'https://player.example/{imdb}', type: 'movie', country: 'DE', kind: 'ads' });
 });
+
+test('the player workflow adds checked film and TV addresses, and removes by name', async () => {
+  const { editPlayers } = await import('../src/lib.mjs');
+  const add = editPlayers([], services, { service: 'P', movie: 'https://p.example/movie/{tmdb}', tv: 'https://p.example/tv/{tmdb}/{season}/{episode}', country: 'gb', kind: 'free' });
+  assert.equal(add.ok, true);
+  assert.deepEqual(add.players.map((p) => [p.service, p.types, p.country]), [['P', ['movie'], 'GB'], ['P', ['tv'], 'GB']]);
+  assert.equal(editPlayers(add.players, services, { service: 'P', movie: 'https://p.example/movie/{tmdb}', country: 'GB', kind: 'free' }).ok, false, 'duplicate');
+  assert.equal(editPlayers([], services, { service: 'P', movie: 'https://p.example/movie/{tmdb}', country: 'US', kind: 'free' }).ok, false, 'US');
+  assert.equal(editPlayers([], services, { service: 'P', country: 'GB', kind: 'free' }).ok, false, 'no address');
+  assert.deepEqual(editPlayers(add.players, services, { action: 'remove', service: 'P' }).players, []);
+  assert.equal(editPlayers(add.players, services, { action: 'remove', service: 'Q' }).ok, false);
+});
