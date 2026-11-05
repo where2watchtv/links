@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-05T15:06:20.285Z",
+ "generated": "2026-11-05T15:13:57.580Z",
  "titles": {},
  "players": [
   {
@@ -20,16 +20,6 @@
    "kind": "free",
    "types": [
     "tv"
-   ]
-  },
-  {
-   "service": "Workflow Test",
-   "url": "https://vidlink.pro/movie/{tmdb}",
-   "id": "tmdb",
-   "country": "DE",
-   "kind": "free",
-   "types": [
-    "movie"
    ]
   }
  ]

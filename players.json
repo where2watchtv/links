@@ -19,16 +19,6 @@
    "types": [
     "tv"
    ]
-  },
-  {
-   "service": "Workflow Test",
-   "url": "https://vidlink.pro/movie/{tmdb}",
-   "id": "tmdb",
-   "country": "DE",
-   "kind": "free",
-   "types": [
-    "movie"
-   ]
   }
  ]
 }
