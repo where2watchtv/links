@@ -1,0 +1,49 @@
+name: Add a link
+description: Add a link to a film or series on a licensed streaming service.
+title: "Link: "
+labels: [link]
+body:
+  - type: markdown
+    attributes:
+      value: Links must go to a licensed service listed in services.json. A bot checks the link and opens a pull request for review.
+  - type: input
+    id: title_id
+    attributes:
+      label: Title id
+      description: IMDb id (tt0903747) or TMDB id (1396).
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      description: Needed for a TMDB id. Ignored for an IMDb id.
+      options: [Film, TV series]
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Link
+      description: The title's page on the service, starting with https://.
+    validations:
+      required: true
+  - type: input
+    id: country
+    attributes:
+      label: Country
+      description: Two-letter code of the country where the link works, such as GB or DE. Links for the US are not accepted.
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options: [Stream, Free, Free with ads, Rent, Buy]
+    validations:
+      required: true
+  - type: input
+    id: note
+    attributes:
+      label: Note
+      description: Optional, up to 140 characters, such as "Seasons 1 to 3" or "4K".

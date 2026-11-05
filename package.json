@@ -1,0 +1,12 @@
+{
+  "name": "where2watch-links",
+  "private": true,
+  "type": "module",
+  "description": "Community direct links for where2watch.ch.",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "check": "node src/check.mjs",
+    "index": "node src/index.mjs",
+    "test": "node --test test/*.test.mjs"
+  }
+}

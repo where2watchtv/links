@@ -1,0 +1,53 @@
+name: link-issue
+
+# An "Add a link" issue becomes a pull request. src/issue.mjs checks the link;
+# the issue text never reaches a shell, only that script and its JSON result.
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: link-issue-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  link:
+    if: contains(github.event.issue.labels.*.name, 'link')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node src/issue.mjs
+        env:
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+      - run: npm run check
+      - name: Open the pull request and reply
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE: ${{ github.event.issue.number }}
+        run: |
+          ok=$(node -p "require('./.link-result.json').ok")
+          node -p "require('./.link-result.json').message" > reply.txt
+          if [ "$ok" = "true" ]; then
+            path=$(node -p "require('./.link-result.json').path")
+            node -p "require('./.link-result.json').summary" > summary.txt
+            branch="link/issue-$ISSUE"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git checkout -B "$branch"
+            git add -- "$path"
+            git commit -F summary.txt
+            git push --force origin "$branch"
+            if [ -z "$(gh pr list --head "$branch" --json number -q '.[0].number')" ]; then
+              printf 'Closes #%s\n' "$ISSUE" > body.txt
+              gh pr create --head "$branch" --title "$(cat summary.txt)" --body-file body.txt
+            fi
+          fi
+          gh issue comment "$ISSUE" --body-file reply.txt

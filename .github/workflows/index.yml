@@ -1,0 +1,35 @@
+name: index
+
+# After a merge, rebuild links.json, the file where2watch.ch reads.
+on:
+  push:
+    branches: [main]
+    paths: ['titles/**', 'services.json', 'src/**']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: index
+  cancel-in-progress: false
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm test
+      - run: npm run check
+      - run: npm run index
+      - name: Commit links.json
+        run: |
+          git diff --quiet -I '"generated"' -- links.json && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add links.json
+          git commit -m "Rebuild links.json"
+          git push
