@@ -1,0 +1,37 @@
+name: Add a player
+description: Add a licensed service's player, one address for every title, with the title's TMDB or IMDb id in it.
+title: "Player: "
+labels: [player]
+body:
+  - type: markdown
+    attributes:
+      value: The service must be in services.json with "player" set to true, which means it has agreed to be played inside where2watch. A bot checks the address and opens a pull request for review.
+  - type: input
+    id: url
+    attributes:
+      label: Player address
+      description: Starting with https://, with {tmdb} or {imdb} where the title's id goes, and {type} (movie or tv) if the service needs it. For example https://player.example/embed/{tmdb}.
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      description: What the address plays. Ignored when it holds {type}.
+      options: [Film, TV series, Both]
+    validations:
+      required: true
+  - type: input
+    id: country
+    attributes:
+      label: Country
+      description: Two-letter code of the country where the player works, such as GB or DE. Players for the US are not accepted.
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options: [Free, Free with ads, Stream, Rent, Buy]
+    validations:
+      required: true

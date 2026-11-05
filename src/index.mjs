@@ -16,6 +16,7 @@ for (const type of TYPES) {
     docs.push({ type, folder, doc: JSON.parse(await readFile(join(ROOT, 'titles', type, folder, 'links.json'), 'utf8')) });
   }
 }
-const index = buildIndex(docs);
+const { players } = JSON.parse(await readFile(join(ROOT, 'players.json'), 'utf8'));
+const index = buildIndex(docs, players);
 await writeFile(join(ROOT, 'links.json'), JSON.stringify(index, null, 1) + '\n');
-console.log(`links.json: ${Object.keys(index.titles).length} titles`);
+console.log(`links.json: ${Object.keys(index.titles).length} titles, ${players.length} players`);

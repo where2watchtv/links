@@ -6,7 +6,7 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkLink, folderId, TYPES } from './lib.mjs';
+import { checkLink, checkPlayer, folderId, TYPES } from './lib.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const services = JSON.parse(await readFile(join(ROOT, 'services.json'), 'utf8'));
@@ -50,8 +50,22 @@ for (const type of TYPES) {
   }
 }
 
+let players = [];
+try {
+  const doc = JSON.parse(await readFile(join(ROOT, 'players.json'), 'utf8'));
+  if (!doc || !Array.isArray(doc.players)) throw new Error('shape');
+  players = doc.players;
+} catch { problems.push('players.json: must be { "players": [...] }'); }
+const okPlayers = [];
+players.forEach((p, i) => {
+  const r = checkPlayer({ ...(p || {}), type: Array.isArray(p?.types) && p.types.length === 2 ? 'both' : p?.types?.[0] }, services, okPlayers);
+  if (!r.ok) return problems.push(`players.json player ${i + 1}: ${r.error}`);
+  if (JSON.stringify(r.player) !== JSON.stringify(p)) problems.push(`players.json player ${i + 1}: should be ${JSON.stringify(r.player)}`);
+  okPlayers.push(r.player);
+});
+
 if (problems.length) {
   console.error(problems.join('\n'));
   process.exit(1);
 }
-console.log(`ok: ${total} links in ${files} titles, ${services.length} services`);
+console.log(`ok: ${total} links in ${files} titles, ${okPlayers.length} players, ${services.length} services`);

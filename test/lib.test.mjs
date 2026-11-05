@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  buildIndex, checkLink, folderId, folderName, issueRequest, parseIssueForm, serviceFor, slugify,
+  buildIndex, checkLink, checkPlayer, folderId, folderName, issueRequest, parseIssueForm, playerRequest, serviceFor, slugify,
 } from '../src/lib.mjs';
 
 const services = JSON.parse(readFileSync(new URL('../services.json', import.meta.url)));
@@ -55,6 +55,26 @@ test('the index keys links by type and tmdb id, and skips empty titles', () => {
     { type: 'tv', folder: '1396-breaking-bad', doc: { title: 'Breaking Bad', links: [link] } },
     { type: 'movie', folder: '603', doc: { title: 'The Matrix', links: [link] } },
     { type: 'movie', folder: '604-x', doc: { title: 'X', links: [] } },
-  ], 'T');
-  assert.deepEqual(idx, { generated: 'T', titles: { 'movie:603': [link], 'tv:1396': [link] } });
+  ], [], 'T');
+  assert.deepEqual(idx, { generated: 'T', titles: { 'movie:603': [link], 'tv:1396': [link] }, players: [] });
+});
+
+test('a player needs one id slot, https, and a service that agreed to be played', () => {
+  const sv = [{ name: 'Player', hosts: ['player.example'], player: true }, { name: 'Netflix', hosts: ['netflix.com'] }];
+  const good = { url: 'https://player.example/embed/{type}/{tmdb}', country: 'gb', kind: 'free' };
+  const r = checkPlayer(good, sv);
+  assert.deepEqual(r.player, { service: 'Player', url: good.url, id: 'tmdb', country: 'GB', kind: 'free', types: ['movie', 'tv'] });
+  assert.equal(checkPlayer({ ...good, url: 'https://player.example/embed/{imdb}', type: 'movie' }, sv).player.id, 'imdb');
+  for (const url of ['https://player.example/embed/603', 'https://player.example/{tmdb}/{imdb}', 'https://player.example/{tmdb}?x={tmdb}',
+    'https://player.example/{tmdb}?s={season}', 'http://player.example/{tmdb}', 'https://{tmdb}.player.example/', 'https://www.netflix.com/{tmdb}']) {
+    assert.equal(checkPlayer({ ...good, url, type: 'movie' }, sv).ok, false, url);
+  }
+  assert.equal(checkPlayer({ ...good, country: 'US' }, sv).ok, false, 'no players for the US');
+  assert.equal(checkPlayer(good, sv, [r.player]).ok, false, 'duplicate');
+  assert.equal(checkPlayer({ ...good, url: 'https://player.example/{tmdb}' }, sv).ok, false, 'type needed without {type}');
+});
+
+test('the player form becomes a player to check', () => {
+  const body = '### Player address\n\nhttps://player.example/{imdb}\n\n### Type\n\nFilm\n\n### Country\n\nDE\n\n### Kind\n\nFree with ads';
+  assert.deepEqual(playerRequest(parseIssueForm(body)), { url: 'https://player.example/{imdb}', type: 'movie', country: 'DE', kind: 'ads' });
 });

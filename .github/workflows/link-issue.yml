@@ -1,6 +1,6 @@
 name: link-issue
 
-# An "Add a link" issue becomes a pull request. src/issue.mjs checks the link;
+# An "Add a link" or "Add a player" issue becomes a pull request. src/issue.mjs checks it;
 # the issue text never reaches a shell, only that script and its JSON result.
 on:
   issues:
@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   link:
-    if: contains(github.event.issue.labels.*.name, 'link')
+    if: contains(github.event.issue.labels.*.name, 'link') || contains(github.event.issue.labels.*.name, 'player')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

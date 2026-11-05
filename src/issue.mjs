@@ -8,7 +8,7 @@
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkLink, folderId, folderName, isImdb, isTmdb, issueRequest, parseIssueForm, TYPES } from './lib.mjs';
+import { checkLink, checkPlayer, folderId, folderName, isImdb, isTmdb, issueRequest, parseIssueForm, playerRequest, TYPES } from './lib.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const KEY = process.env.TMDB_API_KEY;
@@ -39,6 +39,29 @@ async function resolve(id, type) {
 }
 
 const event = JSON.parse(await readFile(process.env.GITHUB_EVENT_PATH, 'utf8'));
+
+/* An "Add a player" issue: one address for every title, added to players.json. */
+if ((event.issue?.labels || []).some((l) => l.name === 'player')) {
+  const services = JSON.parse(await readFile(join(ROOT, 'services.json'), 'utf8'));
+  const file = join(ROOT, 'players.json');
+  const doc = JSON.parse(await readFile(file, 'utf8'));
+  const r = checkPlayer(playerRequest(parseIssueForm(event.issue.body)), services, doc.players);
+  if (!r.ok) {
+    await out({ ok: false, message: r.error });
+    process.exit(0);
+  }
+  doc.players.push(r.player);
+  await writeFile(file, JSON.stringify(doc, null, 2) + '\n');
+  const p = r.player;
+  await out({
+    ok: true,
+    path: 'players.json',
+    summary: `Player: ${p.service} (${p.kind}, ${p.country})`,
+    message: `Added the ${p.service} player for ${p.country}. A maintainer will review the pull request.`,
+  });
+  process.exit(0);
+}
+
 const req = issueRequest(parseIssueForm(event.issue?.body));
 req.type = { film: 'movie', 'tv series': 'tv' }[req.type] || req.type;
 
