@@ -48,5 +48,6 @@
   { "name": "Viki", "hosts": ["viki.com"] },
   { "name": "U-NEXT", "hosts": ["video.unext.jp"] },
   { "name": "Globoplay", "hosts": ["globoplay.globo.com"] },
-  { "name": "Internet Archive (public domain)", "hosts": ["archive.org"] }
+  { "name": "Internet Archive (public domain)", "hosts": ["archive.org"] },
+  { "name": "Example", "hosts": ["example.com"], "player": true }
 ]

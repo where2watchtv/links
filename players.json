@@ -1,3 +1,24 @@
 {
- "players": []
+ "players": [
+  {
+   "service": "Example",
+   "url": "https://vidlink.pro/movie/{tmdb}",
+   "id": "tmdb",
+   "country": "GB",
+   "kind": "free",
+   "types": [
+    "movie"
+   ]
+  },
+  {
+   "service": "Example",
+   "url": "https://vidlink.pro/tv/{tmdb}/{season}/{episode}",
+   "id": "tmdb",
+   "country": "GB",
+   "kind": "free",
+   "types": [
+    "tv"
+   ]
+  }
+ ]
 }
