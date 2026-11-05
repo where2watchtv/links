@@ -1,5 +1,226 @@
 {
- "generated": "2026-11-05T18:22:02.243Z",
+ "generated": "2026-11-05T18:22:19.865Z",
  "titles": {},
- "players": []
+ "players": [
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/movie/{tmdb}",
+   "id": "tmdb",
+   "country": "GB",
+   "kind": "free",
+   "types": [
+    "movie"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/tv/{tmdb}/{season}/{episode}",
+   "id": "tmdb",
+   "country": "GB",
+   "kind": "free",
+   "types": [
+    "tv"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/movie/{tmdb}",
+   "id": "tmdb",
+   "country": "VN",
+   "kind": "free",
+   "types": [
+    "movie"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/tv/{tmdb}/{season}/{episode}",
+   "id": "tmdb",
+   "country": "VN",
+   "kind": "free",
+   "types": [
+    "tv"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/movie/{tmdb}",
+   "id": "tmdb",
+   "country": "PH",
+   "kind": "free",
+   "types": [
+    "movie"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/tv/{tmdb}/{season}/{episode}",
+   "id": "tmdb",
+   "country": "PH",
+   "kind": "free",
+   "types": [
+    "tv"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/movie/{tmdb}",
+   "id": "tmdb",
+   "country": "ID",
+   "kind": "free",
+   "types": [
+    "movie"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/tv/{tmdb}/{season}/{episode}",
+   "id": "tmdb",
+   "country": "ID",
+   "kind": "free",
+   "types": [
+    "tv"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/movie/{tmdb}",
+   "id": "tmdb",
+   "country": "TH",
+   "kind": "free",
+   "types": [
+    "movie"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/tv/{tmdb}/{season}/{episode}",
+   "id": "tmdb",
+   "country": "TH",
+   "kind": "free",
+   "types": [
+    "tv"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/movie/{tmdb}",
+   "id": "tmdb",
+   "country": "MY",
+   "kind": "free",
+   "types": [
+    "movie"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/tv/{tmdb}/{season}/{episode}",
+   "id": "tmdb",
+   "country": "MY",
+   "kind": "free",
+   "types": [
+    "tv"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/movie/{tmdb}",
+   "id": "tmdb",
+   "country": "HK",
+   "kind": "free",
+   "types": [
+    "movie"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/tv/{tmdb}/{season}/{episode}",
+   "id": "tmdb",
+   "country": "HK",
+   "kind": "free",
+   "types": [
+    "tv"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/movie/{tmdb}",
+   "id": "tmdb",
+   "country": "TW",
+   "kind": "free",
+   "types": [
+    "movie"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/tv/{tmdb}/{season}/{episode}",
+   "id": "tmdb",
+   "country": "TW",
+   "kind": "free",
+   "types": [
+    "tv"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/movie/{tmdb}",
+   "id": "tmdb",
+   "country": "SG",
+   "kind": "free",
+   "types": [
+    "movie"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/tv/{tmdb}/{season}/{episode}",
+   "id": "tmdb",
+   "country": "SG",
+   "kind": "free",
+   "types": [
+    "tv"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/movie/{tmdb}",
+   "id": "tmdb",
+   "country": "RU",
+   "kind": "free",
+   "types": [
+    "movie"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/tv/{tmdb}/{season}/{episode}",
+   "id": "tmdb",
+   "country": "RU",
+   "kind": "free",
+   "types": [
+    "tv"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/movie/{tmdb}",
+   "id": "tmdb",
+   "country": "TR",
+   "kind": "free",
+   "types": [
+    "movie"
+   ]
+  },
+  {
+   "service": "VidLink",
+   "url": "https://vidlink.pro/tv/{tmdb}/{season}/{episode}",
+   "id": "tmdb",
+   "country": "TR",
+   "kind": "free",
+   "types": [
+    "tv"
+   ]
+  }
+ ]
 }
