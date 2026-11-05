@@ -166,8 +166,9 @@ export function buildIndex(docs, players = [], generated = new Date().toISOStrin
 
 /**
  * The player workflow's change to players.json: add a service's film and TV
- * addresses (each checked like a submitted player), or remove every player
- * with that service name.
+ * addresses (each checked like a submitted player) in each country given
+ * ("VN, TH" adds one player per country), or remove every player with that
+ * service name.
  */
 export function editPlayers(players, services, { action = 'add', service, movie, tv, country, kind }) {
   const name = String(service || '').trim();
@@ -180,10 +181,13 @@ export function editPlayers(players, services, { action = 'add', service, movie,
   const pairs = [['movie', movie], ['tv', tv]].filter(([, u]) => String(u || '').trim());
   if (!pairs.length) return { ok: false, error: 'Give a film address, a TV address, or both.' };
   const out = players.slice();
-  for (const [type, url] of pairs) {
-    const r = checkPlayer({ service: name, url: String(url).trim(), type, country, kind }, services, out);
-    if (!r.ok) return { ok: false, error: `${type}: ${r.error}` };
-    out.push(r.player);
+  const countries = String(country || '').split(/[\s,]+/).filter(Boolean);
+  for (const cc of countries.length ? countries : ['']) {
+    for (const [type, url] of pairs) {
+      const r = checkPlayer({ service: name, url: String(url).trim(), type, country: cc, kind }, services, out);
+      if (!r.ok) return { ok: false, error: `${type}${cc ? ` in ${cc}` : ''}: ${r.error}` };
+      out.push(r.player);
+    }
   }
   return { ok: true, players: out };
 }

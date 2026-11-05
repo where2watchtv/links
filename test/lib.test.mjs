@@ -92,7 +92,9 @@ test('the player workflow adds checked film and TV addresses, and removes by nam
   assert.equal(add.ok, true);
   assert.deepEqual(add.players.map((p) => [p.service, p.types, p.country]), [['P', ['movie'], 'GB'], ['P', ['tv'], 'GB']]);
   assert.equal(editPlayers(add.players, services, { service: 'P', movie: 'https://p.example/movie/{tmdb}', country: 'GB', kind: 'free' }).ok, false, 'duplicate');
-  assert.equal(editPlayers([], services, { service: 'P', movie: 'https://p.example/movie/{tmdb}', country: 'US', kind: 'free' }).ok, false, 'US');
+  const many = editPlayers([], services, { service: 'P', movie: 'https://p.example/movie/{tmdb}', country: 'VN, th,TR', kind: 'free' });
+  assert.deepEqual(many.players.map((p) => p.country), ['VN', 'TH', 'TR'], 'one player per country');
+  assert.equal(editPlayers([], services, { service: 'P', movie: 'https://p.example/movie/{tmdb}', country: 'GB,US', kind: 'free' }).ok, false, 'US');
   assert.equal(editPlayers([], services, { service: 'P', country: 'GB', kind: 'free' }).ok, false, 'no address');
   assert.deepEqual(editPlayers(add.players, services, { action: 'remove', service: 'P' }).players, []);
   assert.equal(editPlayers(add.players, services, { action: 'remove', service: 'Q' }).ok, false);

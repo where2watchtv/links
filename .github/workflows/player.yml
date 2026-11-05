@@ -20,7 +20,7 @@ on:
         description: TV address with {tmdb} or {imdb}; {season} and {episode} for episode players
         required: false
       country:
-        description: Two-letter country code, not US
+        description: Two-letter country codes, comma separated (VN,TH), not US
         default: GB
       kind:
         type: choice
