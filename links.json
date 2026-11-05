@@ -1,5 +1,26 @@
 {
- "generated": "2026-11-05T13:44:18.118Z",
+ "generated": "2026-11-05T15:06:08.580Z",
  "titles": {},
- "players": []
+ "players": [
+  {
+   "service": "Example",
+   "url": "https://vidlink.pro/movie/{tmdb}",
+   "id": "tmdb",
+   "country": "GB",
+   "kind": "free",
+   "types": [
+    "movie"
+   ]
+  },
+  {
+   "service": "Example",
+   "url": "https://vidlink.pro/tv/{tmdb}/{season}/{episode}",
+   "id": "tmdb",
+   "country": "GB",
+   "kind": "free",
+   "types": [
+    "tv"
+   ]
+  }
+ ]
 }
