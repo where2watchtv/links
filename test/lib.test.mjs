@@ -72,6 +72,11 @@ test('a player needs one id slot, https, and a service that agreed to be played'
   assert.equal(checkPlayer({ ...good, country: 'US' }, sv).ok, false, 'no players for the US');
   assert.equal(checkPlayer(good, sv, [r.player]).ok, false, 'duplicate');
   assert.equal(checkPlayer({ ...good, url: 'https://player.example/{tmdb}' }, sv).ok, false, 'type needed without {type}');
+  const ep = { ...good, url: 'https://player.example/tv/{tmdb}/{season}/{episode}', type: 'tv' };
+  assert.deepEqual(checkPlayer(ep, sv).player.types, ['tv'], 'an episode player');
+  for (const bad of [{ ...ep, type: 'movie' }, { ...ep, type: 'both' }, { ...ep, url: 'https://player.example/{type}/{tmdb}/{season}/{episode}' }, { ...ep, url: 'https://player.example/tv/{tmdb}/{season}' }]) {
+    assert.equal(checkPlayer(bad, sv).ok, false, bad.url + ' ' + bad.type);
+  }
 });
 
 test('the player form becomes a player to check', () => {

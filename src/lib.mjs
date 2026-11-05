@@ -73,9 +73,11 @@ export function checkLink(input, services, existing = []) {
 
 /* A player is one address for every title, with the title's id in it:
    https://player.example/embed/{tmdb} or .../{imdb}, and {type} (movie or tv) if
-   the service needs it. where2watch plays it inside its own page, in a sandboxed
-   frame, so the service must say yes to that: "player": true in services.json. */
-const SLOTS = ['{tmdb}', '{imdb}', '{type}'];
+   the service needs it. A TV player for one episode holds {season} and {episode}
+   too: https://player.example/tv/{tmdb}/{season}/{episode}. where2watch plays it
+   inside its own page, in a sandboxed frame, so the service must say yes to that:
+   "player": true in services.json. */
+const SLOTS = ['{tmdb}', '{imdb}', '{type}', '{season}', '{episode}'];
 export const PLAYER_TYPES = { movie: ['movie'], tv: ['tv'], both: ['movie', 'tv'] };
 
 /** Checks one submitted player. Returns { ok: true, player } or { ok: false, error }. */
@@ -84,10 +86,17 @@ export function checkPlayer(input, services, existing = []) {
   const slots = url.match(/\{[^}]*\}/g) || [];
   const ids = slots.filter((x) => x === '{tmdb}' || x === '{imdb}');
   if (ids.length !== 1 || slots.some((x) => !SLOTS.includes(x)) || slots.length !== new Set(slots).size) {
-    return { ok: false, error: 'The address must hold exactly one of {tmdb} or {imdb}, and may hold {type} once.' };
+    return { ok: false, error: 'The address must hold exactly one of {tmdb} or {imdb}, and may hold {type}, {season} and {episode} once each.' };
+  }
+  const episodic = slots.includes('{season}') || slots.includes('{episode}');
+  if (episodic && !(slots.includes('{season}') && slots.includes('{episode}'))) {
+    return { ok: false, error: 'An episode address holds both {season} and {episode}.' };
+  }
+  if (episodic && (slots.includes('{type}') || String(input.type || '').trim() !== 'tv')) {
+    return { ok: false, error: 'An address with {season} and {episode} is for TV series only: type tv, without {type}.' };
   }
   let u;
-  try { u = new URL(url.replace(/\{(tmdb|imdb|type)\}/g, 'w2wslot')); } catch { return { ok: false, error: 'The address is not a valid web address.' }; }
+  try { u = new URL(url.replace(/\{(tmdb|imdb|type|season|episode)\}/g, 'w2wslot')); } catch { return { ok: false, error: 'The address is not a valid web address.' }; }
   if (u.protocol !== 'https:') return { ok: false, error: 'The address must start with https://.' };
   if (u.username || u.password) return { ok: false, error: 'The address must not contain a username or password.' };
   if (u.hostname.includes('w2wslot')) return { ok: false, error: 'The id goes in the path or the query, not the host name.' };

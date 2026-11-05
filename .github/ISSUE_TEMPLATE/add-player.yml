@@ -10,7 +10,7 @@ body:
     id: url
     attributes:
       label: Player address
-      description: Starting with https://, with {tmdb} or {imdb} where the title's id goes, and {type} (movie or tv) if the service needs it. For example https://player.example/embed/{tmdb}.
+      description: Starting with https://, with {tmdb} or {imdb} where the title's id goes, and {type} (movie or tv) if the service needs it. A TV series player for one episode holds {season} and {episode} as well. For example https://player.example/embed/{tmdb} or https://player.example/tv/{tmdb}/{season}/{episode}.
     validations:
       required: true
   - type: dropdown
