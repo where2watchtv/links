@@ -6,6 +6,7 @@ A link is accepted only if:
 
 - it starts with `https://`
 - its host is a licensed service in `services.json`, or a subdomain of one
+- its country is one of VN, PH, ID, TH, MY, HK, TW, SG, RU, TR
 - it is not already listed for that country
 
 To add a service, open a pull request that adds it to `services.json`.
@@ -20,7 +21,7 @@ titles/movie/603-the-matrix/links.json
 {
   "title": "The Matrix (1999)",
   "links": [
-    { "service": "Netflix", "url": "https://www.netflix.com/title/20557937", "country": "GB", "kind": "flatrate" }
+    { "service": "Netflix", "url": "https://www.netflix.com/title/20557937", "country": "VN", "kind": "flatrate" }
   ]
 }
 ```

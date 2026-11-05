@@ -42,6 +42,10 @@ export function serviceFor(url, services) {
 
 const COUNTRY = /^[A-Z]{2}$/;
 
+/** The only countries community links and players are accepted for. where2watch.ch keeps the same list. */
+export const COMMUNITY_COUNTRIES = ['VN', 'PH', 'ID', 'TH', 'MY', 'HK', 'TW', 'SG', 'RU', 'TR'];
+const ONLY = `accepted only for ${COMMUNITY_COUNTRIES.join(', ')}`;
+
 /**
  * Checks one submitted link. Returns { ok: true, link } with the link in its
  * stored shape, or { ok: false, error } in words a submitter can act on.
@@ -57,8 +61,8 @@ export function checkLink(input, services, existing = []) {
     return { ok: false, error: `${u.hostname} is not on the list of licensed services (services.json). Open a pull request to add it if it is one.` };
   }
   const country = String(input.country || '').trim().toUpperCase();
-  if (!COUNTRY.test(country)) return { ok: false, error: 'The country must be a two-letter code, such as GB or DE.' };
-  if (country === 'US') return { ok: false, error: 'Links for the United States are not accepted.' };
+  if (!COUNTRY.test(country)) return { ok: false, error: 'The country must be a two-letter code, such as VN or TH.' };
+  if (!COMMUNITY_COUNTRIES.includes(country)) return { ok: false, error: `Links are ${ONLY}.` };
   const kind = String(input.kind || '').trim();
   if (!KIND_IDS.includes(kind)) return { ok: false, error: `The kind must be one of: ${KIND_IDS.join(', ')}.` };
   const note = String(input.note || '').trim().slice(0, 140);
@@ -103,8 +107,8 @@ export function checkPlayer(input, services, existing = []) {
   const service = serviceFor(u.toString(), services);
   const name = String(input.service || '').trim().slice(0, 60) || service?.name || u.hostname;
   const country = String(input.country || '').trim().toUpperCase();
-  if (!COUNTRY.test(country)) return { ok: false, error: 'The country must be a two-letter code, such as GB or DE.' };
-  if (country === 'US') return { ok: false, error: 'Players for the United States are not accepted.' };
+  if (!COUNTRY.test(country)) return { ok: false, error: 'The country must be a two-letter code, such as VN or TH.' };
+  if (!COMMUNITY_COUNTRIES.includes(country)) return { ok: false, error: `Players are ${ONLY}.` };
   const kind = String(input.kind || '').trim();
   if (!KIND_IDS.includes(kind)) return { ok: false, error: `The kind must be one of: ${KIND_IDS.join(', ')}.` };
   const type = slots.includes('{type}') ? 'both' : String(input.type || '').trim();

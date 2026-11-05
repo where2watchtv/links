@@ -25,7 +25,7 @@ body:
     id: country
     attributes:
       label: Country
-      description: Two-letter code of the country where the player works, such as GB or DE. Players for the US are not accepted.
+      description: Two-letter code of the country where the player works, one of VN, PH, ID, TH, MY, HK, TW, SG, RU, TR. Other countries are not accepted.
     validations:
       required: true
   - type: dropdown

@@ -20,8 +20,8 @@ on:
         description: TV address with {tmdb} or {imdb}; {season} and {episode} for episode players
         required: false
       country:
-        description: Two-letter country codes, comma separated (VN,TH), not US
-        default: GB
+        description: Country codes, comma separated, from VN,PH,ID,TH,MY,HK,TW,SG,RU,TR
+        default: VN
       kind:
         type: choice
         options: [free, ads, flatrate, rent, buy]

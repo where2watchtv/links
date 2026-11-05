@@ -28,9 +28,9 @@ test('only allowlisted hosts and their subdomains count', () => {
 });
 
 test('checkLink accepts a good link and rejects the rest', () => {
-  const good = { url: 'https://www.netflix.com/title/70143836', country: 'gb', kind: 'flatrate', note: ' 4K ' };
+  const good = { url: 'https://www.netflix.com/title/70143836', country: 'vn', kind: 'flatrate', note: ' 4K ' };
   const r = checkLink(good, services);
-  assert.deepEqual(r, { ok: true, link: { service: 'Netflix', url: 'https://www.netflix.com/title/70143836', country: 'GB', kind: 'flatrate', note: '4K' } });
+  assert.deepEqual(r, { ok: true, link: { service: 'Netflix', url: 'https://www.netflix.com/title/70143836', country: 'VN', kind: 'flatrate', note: '4K' } });
   assert.equal(checkLink({ ...good, url: 'http://www.netflix.com/x' }, services).ok, false);
   assert.equal(checkLink({ ...good, url: 'https://u:p@www.netflix.com/x' }, services).ok, false);
   assert.equal(checkLink({ ...good, url: 'https://piratebay.example/x' }, services).ok, false);
@@ -39,18 +39,19 @@ test('checkLink accepts a good link and rejects the rest', () => {
   assert.equal(checkLink({ ...good, kind: 'torrent' }, services).ok, false);
   assert.equal(checkLink(good, services, [r.link]).ok, false, 'duplicate');
   assert.equal(checkLink({ ...good, country: 'us' }, services).ok, false, 'no links for the US');
+  assert.equal(checkLink({ ...good, country: 'GB' }, services).ok, false, 'only the listed countries');
 });
 
 test('issue form fields become a request', () => {
-  const body = '### Title id\n\ntt0903747\n\n### Type\n\nTV series\n\n### Link\n\nhttps://www.netflix.com/title/70143836\n\n### Country\n\nGB (United Kingdom)\n\n### Kind\n\nFree with ads\n\n### Note\n\n_No response_';
+  const body = '### Title id\n\ntt0903747\n\n### Type\n\nTV series\n\n### Link\n\nhttps://www.netflix.com/title/70143836\n\n### Country\n\nVN (Vietnam)\n\n### Kind\n\nFree with ads\n\n### Note\n\n_No response_';
   const req = issueRequest(parseIssueForm(body));
   assert.equal(req.id, 'tt0903747');
   assert.equal(req.type, 'tv series');
-  assert.deepEqual(req.link, { url: 'https://www.netflix.com/title/70143836', country: 'GB', kind: 'ads', note: '' });
+  assert.deepEqual(req.link, { url: 'https://www.netflix.com/title/70143836', country: 'VN', kind: 'ads', note: '' });
 });
 
 test('the index keys links by type and tmdb id, and skips empty titles', () => {
-  const link = { service: 'Netflix', url: 'https://www.netflix.com/title/1', country: 'GB', kind: 'flatrate' };
+  const link = { service: 'Netflix', url: 'https://www.netflix.com/title/1', country: 'VN', kind: 'flatrate' };
   const idx = buildIndex([
     { type: 'tv', folder: '1396-breaking-bad', doc: { title: 'Breaking Bad', links: [link] } },
     { type: 'movie', folder: '603', doc: { title: 'The Matrix', links: [link] } },
@@ -61,15 +62,16 @@ test('the index keys links by type and tmdb id, and skips empty titles', () => {
 
 test('a player needs one id slot and https, from any host', () => {
   const sv = [{ name: 'Player', hosts: ['player.example'], player: true }, { name: 'Netflix', hosts: ['netflix.com'] }];
-  const good = { url: 'https://player.example/embed/{type}/{tmdb}', country: 'gb', kind: 'free' };
+  const good = { url: 'https://player.example/embed/{type}/{tmdb}', country: 'vn', kind: 'free' };
   const r = checkPlayer(good, sv);
-  assert.deepEqual(r.player, { service: 'Player', url: good.url, id: 'tmdb', country: 'GB', kind: 'free', types: ['movie', 'tv'] });
+  assert.deepEqual(r.player, { service: 'Player', url: good.url, id: 'tmdb', country: 'VN', kind: 'free', types: ['movie', 'tv'] });
   assert.equal(checkPlayer({ ...good, url: 'https://player.example/embed/{imdb}', type: 'movie' }, sv).player.id, 'imdb');
   for (const url of ['https://player.example/embed/603', 'https://player.example/{tmdb}/{imdb}', 'https://player.example/{tmdb}?x={tmdb}',
     'https://player.example/{tmdb}?s={season}', 'http://player.example/{tmdb}', 'https://{tmdb}.player.example/']) {
     assert.equal(checkPlayer({ ...good, url, type: 'movie' }, sv).ok, false, url);
   }
   assert.equal(checkPlayer({ ...good, country: 'US' }, sv).ok, false, 'no players for the US');
+  assert.equal(checkPlayer({ ...good, country: 'GB' }, sv).ok, false, 'only the listed countries');
   assert.equal(checkPlayer(good, sv, [r.player]).ok, false, 'duplicate');
   assert.equal(checkPlayer({ ...good, url: 'https://player.example/{tmdb}' }, sv).ok, false, 'type needed without {type}');
   assert.equal(checkPlayer({ ...good, url: 'https://other.example/{tmdb}', type: 'movie', service: 'Other' }, sv).player.service, 'Other', 'any host');
@@ -88,14 +90,14 @@ test('the player form becomes a player to check', () => {
 
 test('the player workflow adds checked film and TV addresses, and removes by name', async () => {
   const { editPlayers } = await import('../src/lib.mjs');
-  const add = editPlayers([], services, { service: 'P', movie: 'https://p.example/movie/{tmdb}', tv: 'https://p.example/tv/{tmdb}/{season}/{episode}', country: 'gb', kind: 'free' });
+  const add = editPlayers([], services, { service: 'P', movie: 'https://p.example/movie/{tmdb}', tv: 'https://p.example/tv/{tmdb}/{season}/{episode}', country: 'vn', kind: 'free' });
   assert.equal(add.ok, true);
-  assert.deepEqual(add.players.map((p) => [p.service, p.types, p.country]), [['P', ['movie'], 'GB'], ['P', ['tv'], 'GB']]);
-  assert.equal(editPlayers(add.players, services, { service: 'P', movie: 'https://p.example/movie/{tmdb}', country: 'GB', kind: 'free' }).ok, false, 'duplicate');
+  assert.deepEqual(add.players.map((p) => [p.service, p.types, p.country]), [['P', ['movie'], 'VN'], ['P', ['tv'], 'VN']]);
+  assert.equal(editPlayers(add.players, services, { service: 'P', movie: 'https://p.example/movie/{tmdb}', country: 'VN', kind: 'free' }).ok, false, 'duplicate');
   const many = editPlayers([], services, { service: 'P', movie: 'https://p.example/movie/{tmdb}', country: 'VN, th,TR', kind: 'free' });
   assert.deepEqual(many.players.map((p) => p.country), ['VN', 'TH', 'TR'], 'one player per country');
-  assert.equal(editPlayers([], services, { service: 'P', movie: 'https://p.example/movie/{tmdb}', country: 'GB,US', kind: 'free' }).ok, false, 'US');
-  assert.equal(editPlayers([], services, { service: 'P', country: 'GB', kind: 'free' }).ok, false, 'no address');
+  assert.equal(editPlayers([], services, { service: 'P', movie: 'https://p.example/movie/{tmdb}', country: 'VN,US', kind: 'free' }).ok, false, 'US');
+  assert.equal(editPlayers([], services, { service: 'P', country: 'VN', kind: 'free' }).ok, false, 'no address');
   assert.deepEqual(editPlayers(add.players, services, { action: 'remove', service: 'P' }).players, []);
   assert.equal(editPlayers(add.players, services, { action: 'remove', service: 'Q' }).ok, false);
 });
