@@ -59,19 +59,21 @@ test('the index keys links by type and tmdb id, and skips empty titles', () => {
   assert.deepEqual(idx, { generated: 'T', titles: { 'movie:603': [link], 'tv:1396': [link] }, players: [] });
 });
 
-test('a player needs one id slot, https, and a service that agreed to be played', () => {
+test('a player needs one id slot and https, from any host', () => {
   const sv = [{ name: 'Player', hosts: ['player.example'], player: true }, { name: 'Netflix', hosts: ['netflix.com'] }];
   const good = { url: 'https://player.example/embed/{type}/{tmdb}', country: 'gb', kind: 'free' };
   const r = checkPlayer(good, sv);
   assert.deepEqual(r.player, { service: 'Player', url: good.url, id: 'tmdb', country: 'GB', kind: 'free', types: ['movie', 'tv'] });
   assert.equal(checkPlayer({ ...good, url: 'https://player.example/embed/{imdb}', type: 'movie' }, sv).player.id, 'imdb');
   for (const url of ['https://player.example/embed/603', 'https://player.example/{tmdb}/{imdb}', 'https://player.example/{tmdb}?x={tmdb}',
-    'https://player.example/{tmdb}?s={season}', 'http://player.example/{tmdb}', 'https://{tmdb}.player.example/', 'https://www.netflix.com/{tmdb}']) {
+    'https://player.example/{tmdb}?s={season}', 'http://player.example/{tmdb}', 'https://{tmdb}.player.example/']) {
     assert.equal(checkPlayer({ ...good, url, type: 'movie' }, sv).ok, false, url);
   }
   assert.equal(checkPlayer({ ...good, country: 'US' }, sv).ok, false, 'no players for the US');
   assert.equal(checkPlayer(good, sv, [r.player]).ok, false, 'duplicate');
   assert.equal(checkPlayer({ ...good, url: 'https://player.example/{tmdb}' }, sv).ok, false, 'type needed without {type}');
+  assert.equal(checkPlayer({ ...good, url: 'https://other.example/{tmdb}', type: 'movie', service: 'Other' }, sv).player.service, 'Other', 'any host');
+  assert.equal(checkPlayer({ ...good, url: 'https://other.example/{tmdb}', type: 'movie' }, sv).player.service, 'other.example');
   const ep = { ...good, url: 'https://player.example/tv/{tmdb}/{season}/{episode}', type: 'tv' };
   assert.deepEqual(checkPlayer(ep, sv).player.types, ['tv'], 'an episode player');
   for (const bad of [{ ...ep, type: 'movie' }, { ...ep, type: 'both' }, { ...ep, url: 'https://player.example/{type}/{tmdb}/{season}/{episode}' }, { ...ep, url: 'https://player.example/tv/{tmdb}/{season}' }]) {

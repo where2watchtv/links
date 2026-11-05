@@ -1,11 +1,11 @@
 name: Add a player
-description: Add a licensed service's player, one address for every title, with the title's TMDB or IMDb id in it.
+description: Add a player, one address for every title, with the title's TMDB or IMDb id in it.
 title: "Player: "
 labels: [player]
 body:
   - type: markdown
     attributes:
-      value: The service must be in services.json with "player" set to true, which means it has agreed to be played inside where2watch. A bot checks the address and opens a pull request for review.
+      value: A bot checks the address and opens a pull request for review.
   - type: input
     id: url
     attributes:
