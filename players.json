@@ -199,6 +199,26 @@
    "types": [
     "tv"
    ]
+  },
+  {
+   "service": "VidBolt",
+   "url": "https://vidbolt.xyz/movie/{tmdb}",
+   "id": "tmdb",
+   "country": "IN",
+   "kind": "free",
+   "types": [
+    "movie"
+   ]
+  },
+  {
+   "service": "VidBolt",
+   "url": "https://vidbolt.xyz/tv/{tmdb}/{season}/{episode}",
+   "id": "tmdb",
+   "country": "IN",
+   "kind": "free",
+   "types": [
+    "tv"
+   ]
   }
  ]
 }

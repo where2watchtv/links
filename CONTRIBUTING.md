@@ -6,7 +6,7 @@ A link is accepted only if:
 
 - it starts with `https://`
 - its host is a licensed service in `services.json`, or a subdomain of one
-- its country is one of VN, PH, ID, TH, MY, HK, TW, SG, RU, TR
+- its country is one of VN, PH, ID, TH, MY, HK, TW, SG, RU, TR, IN
 - it is not already listed for that country
 
 To add a service, open a pull request that adds it to `services.json`.

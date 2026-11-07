@@ -20,7 +20,7 @@ on:
         description: TV address with {tmdb} or {imdb}; {season} and {episode} for episode players
         required: false
       country:
-        description: Country codes, comma separated, from VN,PH,ID,TH,MY,HK,TW,SG,RU,TR
+        description: Country codes, comma separated, from VN,PH,ID,TH,MY,HK,TW,SG,RU,TR,IN
         default: VN
       kind:
         type: choice

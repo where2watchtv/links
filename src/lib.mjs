@@ -43,7 +43,7 @@ export function serviceFor(url, services) {
 const COUNTRY = /^[A-Z]{2}$/;
 
 /** The only countries community links and players are accepted for. where2watch.ch keeps the same list. */
-export const COMMUNITY_COUNTRIES = ['VN', 'PH', 'ID', 'TH', 'MY', 'HK', 'TW', 'SG', 'RU', 'TR'];
+export const COMMUNITY_COUNTRIES = ['VN', 'PH', 'ID', 'TH', 'MY', 'HK', 'TW', 'SG', 'RU', 'TR', 'IN'];
 const ONLY = `accepted only for ${COMMUNITY_COUNTRIES.join(', ')}`;
 
 /**
